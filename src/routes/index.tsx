@@ -2,10 +2,10 @@ import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 import Signup from '../pages/signup';
+import Signin from '../pages/signin';
 
 export default function App() {
   return (
@@ -13,28 +13,17 @@ export default function App() {
         {/* A <Switch> looks through its children <Route>s and
             renders the first one that matches the current URL. */}
         <Switch>
-          <Route path="/about">
-            <About />
+          <Route path="/signin">
+            <Signin />
           </Route>
-          <Route path="/users">
-            <Users />
+          <Route path="/signup">
+            <Signup />
           </Route>
           <Route path="/">
-            <Signup />
+            <Signin />
           </Route>
         </Switch>
     </Router>
   );
 }
 
-function Home() {
-  return <h2>Home</h2>;
-}
-
-function About() {
-  return <h2>About</h2>;
-}
-
-function Users() {
-  return <h2>Users</h2>;
-}

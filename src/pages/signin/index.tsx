@@ -41,21 +41,17 @@ const Signup: React.FC = () =>{
               <Form.Control type="password" placeholder="Insira sua senha" />
             </FormGroup>
 
-            <FormGroup className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Confirmação de senha</Form.Label>
-              <Form.Control type="password" placeholder="Insira sua senha" />
-            </FormGroup>
-
             <Center>
               <Button variant="success" type="submit" style={{marginRight: 'auto', marginLeft: 'auto'}}>
-                Cadastrar
+                Logar
               </Button>
             </Center>
+
           </Form>
 
           <Center>
-            <LinkContainer to="/signin">
-                <Button variant="link"><small>Já possui uma conta? Faça login</small></Button>
+            <LinkContainer to="/signup">
+                <Button variant="link"><small>Não possui uma conta? Cadastre-se</small></Button>
               </LinkContainer>
           </Center>
 

@@ -1,10 +1,12 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useState, useCallback} from 'react';
 import {Card, Button, Form} from 'react-bootstrap';
 import {Container, AnimationContainer, Center } from './styles';
 import lottie from 'lottie-web';
 import foodCarousel from '../../animations/food-carousel.json';
-import FormGroup from '../../Components/FormGroup';
+import Input from '../../Components/Input';
 import {LinkContainer} from 'react-router-bootstrap';
+import { useHistory } from 'react-router-dom';
+import { useToast } from '../../hooks/toast';
 
 const Signup: React.FC = () =>{
   
@@ -22,7 +24,78 @@ const Signup: React.FC = () =>{
     }
   }, [lottieDivRef])
 
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const validateForm = useCallback((): boolean => {
+    let hasError = false;
+    
+    if(!email){
+      setEmailError("Email inválido");
+      hasError = true;
+    } else if(!email.includes("@")){
+      setEmailError("Email inválido");
+      hasError = true;
+    } 
+    else {
+      setEmailError("");
+    }
+
+    if(!password){
+      setPasswordError("Senha inválida");
+      hasError = true;
+    }else if (password.length < 6){
+      setPasswordError("A senha precisa ter no mínimo 6 dígitos");
+      hasError = true;
+    } else {
+      setPasswordError("");
+    }
+
+    return !hasError;
+  }, [email, password]);
+
+  const history = useHistory();
+  const {addToast} = useToast();
+
+  const handleFormSubmit = useCallback(() => {
+    if(validateForm()){
+
+        fetch("https://localhost:44342/login", {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({email, password}),
+          method: "POST"
+          }) 
+          .then(res => {
+            console.log("essa é a resposta => ", res);
+            if(res.status === 200){
+              history.push("Dashboard");
+            }
+            else{
+              addToast({
+                title: "Erro ao realizar login!",
+                description: "Ocorreu um erro ao realizar o login, tente novamente mais tarde",
+                type: 'danger'
+              });
+              console.log("erro => ", res);
+            }
+          })
+          .catch(() => {
+            addToast({
+              title: "Erro ao realizar login!",
+              description: "Ocorreu um erro ao realizar o login, tente novamente mais tarde",
+              type: 'danger'
+            })
+          });
+    }
+  }
+  , [addToast, email, history, password, validateForm]);
+
   return (
   <Container>
       <Card>
@@ -30,19 +103,27 @@ const Signup: React.FC = () =>{
           
           <AnimationContainer className="col-md-12" ref={lottieDivRef} />
           
-          <Form className="col-md-12">
-            <FormGroup>
-              <Form.Label>Endereço de email</Form.Label>
-              <Form.Control type="email" placeholder="Insira seu email" />
-            </FormGroup>
+          <Form className="col-md-12" onSubmit={(form) => form.preventDefault()}>
+            <Input 
+              name="Endereço de email"
+              placeholder="Insira seu email"
+              value={email}
+              onValueChange={(value) => setEmail(value)}
+              error={emailError}
+              />
 
-            <FormGroup className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Senha</Form.Label>
-              <Form.Control type="password" placeholder="Insira sua senha" />
-            </FormGroup>
+            <Input 
+              type="password"
+              name="Senha"
+              placeholder="Insira sua senha"
+              value={password}
+              onValueChange={(value) => setPassword(value)}
+              error={passwordError}
+              />
 
             <Center>
-              <Button variant="success" type="submit" style={{marginRight: 'auto', marginLeft: 'auto'}}>
+              <Button variant="success" type="submit" style={{marginRight: 'auto', marginLeft: 'auto'}}
+                onClick={handleFormSubmit}>
                 Logar
               </Button>
             </Center>

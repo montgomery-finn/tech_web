@@ -1,10 +1,12 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useCallback, useState} from 'react';
 import {Card, Button, Form} from 'react-bootstrap';
 import {Container, AnimationContainer, Center } from './styles';
 import lottie from 'lottie-web';
 import foodCarousel from '../../animations/food-carousel.json';
-import FormGroup from '../../Components/FormGroup';
+import Input from '../../Components/Input'
 import {LinkContainer} from 'react-router-bootstrap';
+import { useHistory } from 'react-router-dom';
+import {useToast} from '../../hooks/toast';
 
 const Signup: React.FC = () =>{
   
@@ -22,7 +24,108 @@ const Signup: React.FC = () =>{
     }
   }, [lottieDivRef])
 
+  const [name, setName] = useState("");
+  const [nameError, setNameError] = useState("");
+
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
   
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [passwordConfirmationError, setPasswordConfirmationError] = useState("");
+  
+
+  const validateForm = useCallback((): boolean => {
+    let hasError = false;
+    
+    if(!name){
+      setNameError("Nome inválido");
+      hasError = true;
+    } else if(name.length < 3){
+      setNameError("O nome precisa ter no mínimo 3 dígitos");
+      hasError = true;
+    } else {
+      setNameError("");
+    }
+
+    if(!email){
+      setEmailError("Email inválido");
+      hasError = true;
+    } else if(!email.includes("@")){
+      setEmailError("Email inválido");
+      hasError = true;
+    } 
+    else {
+      setEmailError("");
+    }
+
+    if(!password){
+      setPasswordError("Senha inválida");
+      hasError = true;
+    }else if (password.length < 6){
+      setPasswordError("A senha precisa ter no mínimo 6 dígitos");
+      hasError = true;
+    } else {
+      setPasswordError("");
+    }
+
+    if(password !== passwordConfirmation){
+      setPasswordConfirmationError("Senha e confirmação de senha são diferentes");
+      hasError = true;
+    } else{
+      setPasswordConfirmationError("");
+    }
+
+    return !hasError;
+  }, [email, name, password, passwordConfirmation]);
+
+  const history = useHistory();
+  const {addToast} = useToast();
+
+  const handleFormSubmit = useCallback(() => {
+    if(validateForm()){
+
+        fetch("https://localhost:44342/register", {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({name, email, password}),
+          method: "POST"
+          }) 
+          .then(res => {
+            console.log("essa é a resposta => ", res);
+            if(res.status === 200){
+              history.push("Signin");
+              addToast({
+                title: "Cadastrado com sucesso!",
+                description: "Você já pode fazer login com suas credenciais",
+                type: 'success'
+              });
+            }
+            else{
+              addToast({
+                title: "Erro ao realizar cadastro!",
+                description: "Ocorreu um erro ao realizar o cadastro, tente novamente mais tarde",
+                type: 'danger'
+              });
+              console.log("erro => ", res);
+            }
+          })
+          .catch(() => {
+            addToast({
+              title: "Erro ao realizar cadastro!",
+              description: "Ocorreu um erro ao realizar o cadastro, tente novamente mais tarde",
+              type: 'danger'
+            })
+          });
+    }
+  }
+  , [addToast, email, history, name, password, validateForm]);
+
+
   return (
   <Container>
       <Card>
@@ -30,24 +133,47 @@ const Signup: React.FC = () =>{
           
           <AnimationContainer className="col-md-12" ref={lottieDivRef} />
           
-          <Form className="col-md-12">
-            <FormGroup>
-              <Form.Label>Endereço de email</Form.Label>
-              <Form.Control type="email" placeholder="Insira seu email" />
-            </FormGroup>
+          <Form className="col-md-12" onSubmit={(form) => form.preventDefault()}>
+            <Input 
+              name="Nome"
+              placeholder="Insira seu nome"
+              value={name}
+              onValueChange={(value) => setName(value)}
+              error={nameError}
+              />
 
-            <FormGroup className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Senha</Form.Label>
-              <Form.Control type="password" placeholder="Insira sua senha" />
-            </FormGroup>
+            <Input 
+              name="Endereço de email"
+              placeholder="Insira seu email"
+              value={email}
+              onValueChange={(value) => setEmail(value)}
+              error={emailError}
+              />
 
-            <FormGroup className="mb-3" controlId="formBasicPassword">
-              <Form.Label>Confirmação de senha</Form.Label>
-              <Form.Control type="password" placeholder="Insira sua senha" />
-            </FormGroup>
+            <Input 
+              type="password"
+              name="Senha"
+              placeholder="Insira sua senha"
+              value={password}
+              onValueChange={(value) => setPassword(value)}
+              error={passwordError}
+              />
+
+            <Input 
+              type="password"
+              name="Confirmação de senha"
+              placeholder="Insira sua senha"
+              value={passwordConfirmation}
+              onValueChange={(value) => setPasswordConfirmation(value)}
+              error={passwordConfirmationError}
+              />
 
             <Center>
-              <Button variant="success" type="submit" style={{marginRight: 'auto', marginLeft: 'auto'}}>
+              <Button  
+                variant="success" 
+                type="submit" 
+                style={{marginRight: 'auto', marginLeft: 'auto'}}
+                onClick={handleFormSubmit}>
                 Cadastrar
               </Button>
             </Center>

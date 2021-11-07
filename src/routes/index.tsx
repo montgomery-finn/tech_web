@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import Signup from '../pages/signup';
 import Signin from '../pages/signin';
+import Dashboard from '../pages/dashboard';
 
 export default function App() {
   return (
@@ -19,7 +20,10 @@ export default function App() {
           <Route path="/signup">
             <Signup />
           </Route>
-          <Route path="/">
+          <Route path="/dashboard">
+            <Dashboard />
+          </Route>
+          <Route path="/" exact>
             <Signin />
           </Route>
         </Switch>

@@ -7,6 +7,7 @@ import Input from '../../Components/Input'
 import {LinkContainer} from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import {useToast} from '../../hooks/toast';
+import api from '../../services/api';
 
 const Signup: React.FC = () =>{
   
@@ -84,43 +85,26 @@ const Signup: React.FC = () =>{
   const history = useHistory();
   const {addToast} = useToast();
 
-  const handleFormSubmit = useCallback(() => {
+  const handleFormSubmit = useCallback(async (): Promise<void> => {
     if(validateForm()){
+      try{
+        await api.post("/register", {name, email, password});
 
-        fetch("https://localhost:44342/register", {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({name, email, password}),
-          method: "POST"
-          }) 
-          .then(res => {
-            console.log("essa é a resposta => ", res);
-            if(res.status === 200){
-              history.push("Signin");
-              addToast({
-                title: "Cadastrado com sucesso!",
-                description: "Você já pode fazer login com suas credenciais",
-                type: 'success'
-              });
-            }
-            else{
-              addToast({
-                title: "Erro ao realizar cadastro!",
-                description: "Ocorreu um erro ao realizar o cadastro, tente novamente mais tarde",
-                type: 'danger'
-              });
-              console.log("erro => ", res);
-            }
-          })
-          .catch(() => {
-            addToast({
-              title: "Erro ao realizar cadastro!",
-              description: "Ocorreu um erro ao realizar o cadastro, tente novamente mais tarde",
-              type: 'danger'
-            })
-          });
+        history.push("Signin");
+        
+        addToast({
+          title: "Cadastrado com sucesso!",
+          description: "Você já pode fazer login com suas credenciais",
+          type: 'success'
+        });
+        
+      } catch {
+        addToast({
+          title: "Erro ao realizar cadastro!",
+          description: "Ocorreu um erro ao realizar o cadastro, tente novamente mais tarde",
+          type: 'danger'
+        });
+      }
     }
   }
   , [addToast, email, history, name, password, validateForm]);

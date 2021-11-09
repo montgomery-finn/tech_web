@@ -7,6 +7,7 @@ import Input from '../../Components/Input';
 import {LinkContainer} from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
+import {useAuth} from '../../hooks/auth';
 
 const Signup: React.FC = () =>{
   
@@ -59,42 +60,23 @@ const Signup: React.FC = () =>{
 
   const history = useHistory();
   const {addToast} = useToast();
+  const { signIn } = useAuth();
 
-  const handleFormSubmit = useCallback(() => {
+  const handleFormSubmit = useCallback(async (): Promise<void> => {
     if(validateForm()){
-
-        fetch("https://localhost:44342/login", {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({email, password}),
-          method: "POST"
-          }) 
-          .then(res => {
-            console.log("essa é a resposta => ", res);
-            if(res.status === 200){
-              history.push("Dashboard");
-            }
-            else{
-              addToast({
-                title: "Erro ao realizar login!",
-                description: "Ocorreu um erro ao realizar o login, tente novamente mais tarde",
-                type: 'danger'
-              });
-              console.log("erro => ", res);
-            }
-          })
-          .catch(() => {
-            addToast({
-              title: "Erro ao realizar login!",
-              description: "Ocorreu um erro ao realizar o login, tente novamente mais tarde",
-              type: 'danger'
-            })
-          });
+      try{
+        await signIn({email, password});
+        history.push("Dashboard");
+      } catch{
+        addToast({
+          title: "Erro ao realizar login!",
+          description: "Ocorreu um erro ao realizar o login, tente novamente mais tarde",
+          type: 'danger'
+        });
+      }
     }
   }
-  , [addToast, email, history, password, validateForm]);
+  , [addToast, email, history, password, signIn, validateForm]);
 
   return (
   <Container>

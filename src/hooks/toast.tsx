@@ -43,7 +43,7 @@ export const ToastProvider: React.FC = ({children}) => {
             {children}
             <ToastContainer position="top-end" className="p-3">
                 {toasts.map((toast) => (
-                    <Toast onClose={() => removeToast(toast.id)}>
+                    <Toast onClose={() => removeToast(toast.id)} autohide>
                         <Toast.Header className={`bg-${toast.type ?? "info"}`} >
                             <strong className="me-auto text-light">{toast.title}</strong>
                         </Toast.Header>

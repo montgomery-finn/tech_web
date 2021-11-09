@@ -1,13 +1,13 @@
 import React from 'react';
 import './App.css';
 import Routes from './routes';
-import {ToastProvider} from './hooks/toast';
+import IndexProvider from './hooks';
 
 function App() {
   return (
-    <ToastProvider>
+    <IndexProvider>
       <Routes />
-    </ToastProvider>
+    </IndexProvider>
   );
 }
 

@@ -66,7 +66,7 @@ const Signup: React.FC = () =>{
     if(validateForm()){
       try{
         await signIn({email, password});
-        history.push("Dashboard");
+        history.push("app");
       } catch{
         addToast({
           title: "Erro ao realizar login!",

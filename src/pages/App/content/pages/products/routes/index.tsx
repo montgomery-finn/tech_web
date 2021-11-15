@@ -1,24 +1,25 @@
 import React from 'react';
 import {
-  BrowserRouter as Router,
   Switch,
   Route
 } from "react-router-dom";
 import List from '../pages/list'
 import Create from '../pages/create'
+import Edit from '../pages/edit';
 
 const Products: React.FC = () => {
   return (
-    <Router>
-      <Switch>
-        <Route path="/app/products" exact>
-          <List />
-        </Route>
-        <Route path="/app/products/create" >
-          <Create />
-        </Route>
-      </Switch>
-    </Router>
+    <Switch>
+      <Route path="/app/products/create" >
+        <Create />
+      </Route>
+      <Route path="/app/products/edit" >
+        <Edit />
+      </Route>
+      <Route path="/app/products">
+        <List />
+      </Route>
+    </Switch>
   );
 }
 

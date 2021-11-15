@@ -14,13 +14,14 @@ interface InputProps {
 const Input: React.FC<InputProps> = ({type, name, placeholder, value, onValueChange, error}) => (
   <StyledFormGroup>
     <Form.Label>{name}</Form.Label>
-        <Form.Control type={type ?? "text"} placeholder={placeholder} 
-          value={value} onChange={(event) => onValueChange(event.target.value)} />
-        
-        {error && 
-          <Form.Text className="text-danger">
-            {error}
-          </Form.Text>}
+    
+    <Form.Control type={type ?? "text"} placeholder={placeholder} 
+      value={value} onChange={(event) => onValueChange(event.target.value)} />
+    
+    {error && 
+      <Form.Text className="text-danger">
+        {error}
+      </Form.Text>}
   </StyledFormGroup>
 );
 

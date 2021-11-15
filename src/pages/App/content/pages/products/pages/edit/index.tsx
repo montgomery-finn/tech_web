@@ -5,17 +5,21 @@ import Input from '../../../../../../../Components/Input';
 import InputFile from '../../../../../../../Components/InputFile';
 import api from '../../../../../../../services/api';
 import { useToast } from '../../../../../../../hooks/toast';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
+import ProductDTO from '../../DTOs/productDTO';
 
-const Create: React.FC = () => {
+const Edit: React.FC = () => {
 
-  const [name, setName] = useState('');
+  const { state } = useLocation();
+  const product = (state as any).product as ProductDTO;
+
+  const [name, setName] = useState(product.name);
   const [nameError, setNameError] = useState('');
   
-  const [price, setPrice] = useState('');
+  const [price, setPrice] = useState(`${product.price}`);
   const [priceError, setPriceError] = useState('');
   
-  const [priceInPoints, setPriceInPoints] = useState('');
+  const [priceInPoints, setPriceInPoints] = useState(`${product.priceInPoints}`);
   const [priceInPointsError, setPriceInPointsError] = useState('');
   
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -45,59 +49,68 @@ const Create: React.FC = () => {
         setPriceInPointsError("")
       }
 
-      if(imageInputRef.current?.files?.length === 0)
-      {
-        setImageError("Selecione um arquivo");
-        hasErrors = true;
-      } else {
-        setImageError("");
-      }
 
     return !hasErrors;
   }, [name, price, priceInPoints])
 
   const { addToast } = useToast();
 
-
-  const handleFormSubmit = useCallback(() => {
+  const handleFormSubmit = useCallback(async () => {
     if(isValid()){
       try{
-        if(imageInputRef.current && imageInputRef.current.files){
+        let file: File | null = null;
 
-          const file = imageInputRef.current.files[0];
+        if(imageInputRef.current && imageInputRef.current.files){
+          file = imageInputRef.current.files[0];
+        }
   
+        if(file){
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onload = function () {
-          api.post("products", {
-                                  name, 
-                                  price, 
-                                  priceInPoints, 
-                                  base64Image: (reader.result as string)
-                                }
+          api.put("products", {
+                                id: product.id,
+                                name, 
+                                price, 
+                                priceInPoints, 
+                                base64Image: (reader.result as string)
+                              }
                   ).then(() => {
-                    addToast({type: 'success', title: "Sucesso", description: "Produto adicionado com sucesso"});
+                    addToast({type: 'success', title: "Sucesso", description: "Produto editado com sucesso"});
                   });                  
-          };
-          reader.onerror = function (error) {
-              console.log("aaa")
-              addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao ler imagem"});
-          };
+            };
+            reader.onerror = function (error) {
+                console.log("aaa")
+                addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao ler imagem"});
+            };
         }
+        else {
+          await api.put("products", {
+              id: product.id,
+              name, 
+              price, 
+              priceInPoints,
+            }
+          ).then(() => {
+          addToast({type: 'success', title: "Sucesso", description: "Produto editado com sucesso"});
+          });          
+        }
+
+        
       }
       catch{
-        addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao cadastrar produto"});
+        addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao editar produto"});
       }
     }
     else{
       console.log("não é valido")
     }
-  }, [isValid, name, price, priceInPoints, addToast])
+  }, [isValid, product.id, name, price, priceInPoints, addToast])
 
   return (
     <Container>
       <Card className="p-4 w-50">
-        <h2 className="mb-2">Cadastrar produto</h2>
+        <h2 className="mb-2">Editar produto</h2>
 
         <Input 
           name="Nome" 
@@ -123,7 +136,7 @@ const Create: React.FC = () => {
           onValueChange={(value) => setPriceInPoints(value)}/>
 
         <InputFile 
-          name="Imagem"
+          name="Substituir imagem"
           inputFileRef={imageInputRef}
           error={imageError} />
 
@@ -133,4 +146,4 @@ const Create: React.FC = () => {
   );
 }
 
-export default Create;
+export default Edit;

@@ -24,8 +24,6 @@ export const Button = styled(BootstrapButton)`
     padding-right: 5px;
     width: 28px;
   }
-
-
 `;
 
 export const ButtonsContainer = styled.div`

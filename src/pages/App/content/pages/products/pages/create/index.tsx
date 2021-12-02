@@ -58,6 +58,7 @@ const Create: React.FC = () => {
 
   const { addToast } = useToast();
 
+  const history = useHistory();
 
   const handleFormSubmit = useCallback(() => {
     if(isValid()){
@@ -77,6 +78,7 @@ const Create: React.FC = () => {
                                 }
                   ).then(() => {
                     addToast({type: 'success', title: "Sucesso", description: "Produto adicionado com sucesso"});
+                    history.goBack();
                   });                  
           };
           reader.onerror = function (error) {

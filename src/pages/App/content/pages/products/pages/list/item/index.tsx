@@ -16,24 +16,26 @@ const Item: React.FC<ItemProps> = ({product}) => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const { addToast } = useToast();
+  
+  const history = useHistory();
 
   const handleDelete = useCallback(async () => {
     try{
       await api.delete(`/products/${product.id}`);
       setDeleteModalVisible(false);
       addToast({type: 'success', title: "Sucesso", description: "Produto removido com sucesso"});
+      history.go(0)
     }
     catch {
       addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao remover produto"});
     }
-  }, [addToast, product.id]);
+  }, [addToast, history, product.id]);
 
-  const history = useHistory();
 
   return (
     <>
       <Container>
-        <Image fluid src={`https://localhost:44342/image/${product.fileName}`}/>
+        <Image fluid src={`http://localhost:28464/image/${product.fileName}`}/>
         <InfoContainer>
           <span>{product.name}</span><br/>
           <span>Preço: R$ {product.price}</span><br/>

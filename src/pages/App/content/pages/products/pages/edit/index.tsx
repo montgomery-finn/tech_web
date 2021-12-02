@@ -55,6 +55,8 @@ const Edit: React.FC = () => {
 
   const { addToast } = useToast();
 
+  const history = useHistory();
+
   const handleFormSubmit = useCallback(async () => {
     if(isValid()){
       try{
@@ -77,10 +79,10 @@ const Edit: React.FC = () => {
                               }
                   ).then(() => {
                     addToast({type: 'success', title: "Sucesso", description: "Produto editado com sucesso"});
+                    history.goBack();
                   });                  
             };
             reader.onerror = function (error) {
-                console.log("aaa")
                 addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao ler imagem"});
             };
         }
@@ -93,6 +95,7 @@ const Edit: React.FC = () => {
             }
           ).then(() => {
           addToast({type: 'success', title: "Sucesso", description: "Produto editado com sucesso"});
+          history.goBack();
           });          
         }
 

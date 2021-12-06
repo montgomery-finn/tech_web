@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Container } from './styles';
 import Sidebar from './sidebar';
 import ContentRoutes from './content/routes';
 
 const Index: React.FC = () => {
   
-  return (
+    return (
     <Container>
       <Sidebar />
       <ContentRoutes />

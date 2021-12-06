@@ -1,18 +1,18 @@
 export default interface OrderDTO {
-  ID: string;
-  Customer?: {
-    ID: string;
-    CPF: string;
+  id: string;
+  customer?: {
+    id: string;
+    cpf: string;
   }
-  OrderProducts: {
-    ID: string;
-    Product: { 
-      ID: string;
-      Name: string;
-      Price: number;
-      PriceInPoints: number;
-      FileName: string;
+  orderProducts: {
+    id: string;
+    product: { 
+      id: string;
+      name: string;
+      price: number;
+      priceInPoints: number;
+      fileName: string;
     }
-    Quantity: number;
+    quantity: number;
   }[]
 }

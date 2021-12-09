@@ -6,3 +6,8 @@ export const Container = styled.div`
   padding: 20px;
   overflow: scroll;
 `;
+
+export const NoOrders = styled.h2`
+  width: 100%;
+  text-align: center;
+`;

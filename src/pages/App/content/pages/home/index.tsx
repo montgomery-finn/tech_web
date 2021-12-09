@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Container } from './styles';
-import OrderDTO from '../DTOs/OrderDTO';
+import { Container, NoOrders } from './styles';
+import OrderDTO from '../../../../../DTOs/OrderDTO';
 import Notification from './notification'
-import {useToast} from '../../../../../../hooks/toast';
+import {useToast} from '../../../../../hooks/toast';
 import { getDatabase, ref, onValue, onChildAdded} from "firebase/database";
-import api from '../../../../../../services/api';
+import api from '../../../../../services/api';
 
 const Home: React.FC = () => {
 
@@ -34,7 +34,10 @@ const Home: React.FC = () => {
   }, [])
 
   return <Container>
-    {notifications.map(order => (<Notification onRemoveOrder={removeOrder} key={order.id} order={order}/>))}
+    {notifications.length > 0 ? 
+      notifications.map(order => (<Notification onRemoveOrder={removeOrder} key={order.id} order={order}/>))
+      : <NoOrders>Nenhum pedido novo</NoOrders>
+    }
   </Container>
 }
 

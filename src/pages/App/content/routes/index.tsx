@@ -4,7 +4,8 @@ import {
   Route
 } from "react-router-dom";
 import ProductRoutes from '../pages/products/routes'
-import Home from '../pages/home/pages';
+import Home from '../pages/home';
+import History from '../pages/history';
 
 const Content: React.FC = () =>{
   
@@ -15,6 +16,9 @@ const Content: React.FC = () =>{
       </Route>
       <Route path="/app/products">
         <ProductRoutes />
+      </Route>
+      <Route path="/app/history">
+        <History />
       </Route>
     </Switch>
   )}

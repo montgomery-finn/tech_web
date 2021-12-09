@@ -1,11 +1,13 @@
 import React, { useCallback } from "react";
 import { ButtonsContainer, Button, Customer } from './styles';
-import OrderDTO from '../../DTOs/OrderDTO';
+import OrderDTO from '../../../../../../DTOs/OrderDTO';
 import { Card, Table } from 'react-bootstrap';
 import { FaBell, FaCheck } from 'react-icons/fa'
-import api from '../../../../../../../services/api';
-import { useToast } from "../../../../../../../hooks/toast";
+import api from '../../../../../../services/api';
+import { useToast } from "../../../../../../hooks/toast";
 import { getDatabase, ref, set } from "firebase/database";
+import {v4} from 'uuid';
+import { useAuth } from "../../../../../../hooks/auth";
 
 interface NotificationProps {
   order: OrderDTO;
@@ -16,11 +18,13 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
 
   const { addToast } = useToast();
 
+  const {user} = useAuth();
+
   const handleFinishOrder = useCallback(async () => {
     console.log("Vai finalizar => ", order.id)
 
     try{
-      await api.post("Orders/Finish", { orderId: order.id });
+      await api.post("Orders/Finish", { orderId: order.id, userId: user.id });
 
       const db = getDatabase();
       set(ref(db, 'NewOrders/' + order.id), null)
@@ -36,13 +40,13 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
     }catch (e){
       addToast({type: 'danger', title: 'Erro ao finalizar pedido', description: (e as any).message})
     }
-  }, [addToast, onRemoveOrder, order.id])
+  }, [addToast, onRemoveOrder, order.id, user.id])
 
   const handleNotifyCustomer = useCallback(() => {
     const db = getDatabase();
     set(ref(db, 'NewOrders/' + order.id), {
       id: order.id,
-      ready: true
+      ready: v4()
     })
       .then(() => {
       })

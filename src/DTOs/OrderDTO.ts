@@ -1,9 +1,10 @@
 export default interface OrderDTO {
   id: string;
+  createdAt: string;
   customer?: {
     id: string;
     cpf: string;
-  }
+  };
   orderProducts: {
     id: string;
     product: { 
@@ -14,5 +15,10 @@ export default interface OrderDTO {
       fileName: string;
     }
     quantity: number;
-  }[]
+  }[];
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  }
 }

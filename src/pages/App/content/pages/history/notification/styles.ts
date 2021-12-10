@@ -9,6 +9,7 @@ export const Name = styled.p`
 export const HeaderContainer = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 `;
 
 export const ButtonsContainer = styled.div`

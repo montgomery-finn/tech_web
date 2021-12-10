@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Name, HeaderContainer } from './styles';
 import OrderDTO from '../../../../../../DTOs/OrderDTO';
 import { Card, Table } from 'react-bootstrap';
 import {parseISO, format} from 'date-fns';
+import {Button} from 'react-bootstrap';
 
 interface NotificationProps {
   order: OrderDTO;
@@ -10,6 +11,8 @@ interface NotificationProps {
 
 const Notification: React.FC<NotificationProps> = ({ order }) => {
 
+  const [more, setMore] = useState(false);
+ 
   return (
     <Card style={{marginBottom: 20}}>
 
@@ -24,33 +27,34 @@ const Notification: React.FC<NotificationProps> = ({ order }) => {
           <Name>
             Data: { format(parseISO(order.createdAt), "dd/MM/yyyy")}
           </Name>
+          <Button size="sm" onClick={() => setMore(v => !v)}>Ver produtos</Button>
         </HeaderContainer>
       </Card.Header>
 
-
-      <Card.Body>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Quantidade</th>
-              <th>Produto</th>
-              <th>Preço em pontos</th>
-              <th>Preço</th>
-            </tr>
-          </thead>
-          <tbody>
-            {order?.orderProducts?.map(orderProduct => (
-              <tr key={orderProduct.id}>
-                <td>{orderProduct.quantity}</td>
-                <td>{orderProduct.product.name}</td>
-                <td>{orderProduct.product.priceInPoints}</td>
-                <td>R$ {orderProduct.product.price}</td>
+      {more &&
+        <Card.Body>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Quantidade</th>
+                <th>Produto</th>
+                <th>Preço em pontos</th>
+                <th>Preço</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      </Card.Body>
-
+            </thead>
+            <tbody>
+              {order?.orderProducts?.map(orderProduct => (
+                <tr key={orderProduct.id}>
+                  <td>{orderProduct.quantity}</td>
+                  <td>{orderProduct.product.name}</td>
+                  <td>{orderProduct.product.priceInPoints}</td>
+                  <td>R$ {orderProduct.product.price}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Card.Body>
+      }
     </Card>
   )
 }

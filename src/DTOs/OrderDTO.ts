@@ -4,6 +4,7 @@ export default interface OrderDTO {
   customer?: {
     id: string;
     cpf: string;
+    points: number;
   };
   orderProducts: {
     id: string;

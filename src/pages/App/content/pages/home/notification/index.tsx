@@ -1,7 +1,7 @@
-import React, { useCallback } from "react";
-import { ButtonsContainer, Button, Customer } from './styles';
+import React, { useCallback, useState } from "react";
+import { ButtonsContainer, Button, Customer, Points } from './styles';
 import OrderDTO from '../../../../../../DTOs/OrderDTO';
-import { Card, Table } from 'react-bootstrap';
+import { Card, Table, FormCheck } from 'react-bootstrap';
 import { FaBell, FaCheck } from 'react-icons/fa'
 import api from '../../../../../../services/api';
 import { useToast } from "../../../../../../hooks/toast";
@@ -20,11 +20,12 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
 
   const {user} = useAuth();
 
+  const [usedPoints, setUsedPoints] = useState(0);
+
   const handleFinishOrder = useCallback(async () => {
-    console.log("Vai finalizar => ", order.id)
 
     try{
-      await api.post("Orders/Finish", { orderId: order.id, userId: user.id });
+      await api.post("Orders/Finish", { orderId: order.id, userId: user.id, usedPoints });
 
       const db = getDatabase();
       set(ref(db, 'NewOrders/' + order.id), null)
@@ -40,7 +41,7 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
     }catch (e){
       addToast({type: 'danger', title: 'Erro ao finalizar pedido', description: (e as any).message})
     }
-  }, [addToast, onRemoveOrder, order.id, user.id])
+  }, [addToast, onRemoveOrder, order.id, usedPoints, user.id])
 
   const handleNotifyCustomer = useCallback(() => {
     const db = getDatabase();
@@ -55,6 +56,8 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
       });
   }, [order.id]);
 
+  const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+
   return (
     <Card style={{marginBottom: 20}}>
       <Card.Header className="bg-secondary text-light">
@@ -65,6 +68,12 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
         <Customer>
             Cliente: {order?.customer ? order.customer.cpf : "não identificado"} <br />
         </Customer>
+        {order.customer && (
+          <>
+            <Points>Pontos disponíveis: {order.customer?.points}</Points>
+            <Points>Pontos utilizados: {usedPoints}</Points>
+          </>
+          )}
         
         <Table striped bordered hover>
           <thead>
@@ -73,6 +82,7 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
               <th>Produto</th>
               <th>Preço em pontos</th>
               <th>Preço</th>
+              {order.customer && <th>Pagar com pontos?</th>}
             </tr>
           </thead>
           <tbody>
@@ -82,6 +92,23 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
                 <td>{orderProduct.product.name}</td>
                 <td>{orderProduct.product.priceInPoints}</td>
                 <td>R$ {orderProduct.product.price}</td>
+                {order.customer && (
+                  <td>
+                    <FormCheck 
+                      disabled={order.customer.points - usedPoints < orderProduct.product.priceInPoints && !selectedProducts.find(o => o ===orderProduct.id)}
+                      
+                      onChange={(event) => {
+                        const value = event.currentTarget.checked;
+
+                        if(value){
+                          setUsedPoints(oldValue => oldValue += orderProduct.product.priceInPoints);
+                          setSelectedProducts(oldValue => [...oldValue, orderProduct.id])
+                        } else {
+                          setUsedPoints(oldValue => oldValue -= orderProduct.product.priceInPoints);
+                        }
+                      }}
+                    />
+                  </td>)}
               </tr>
             ))}
           </tbody>

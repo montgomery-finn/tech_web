@@ -22,6 +22,7 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
 
   const [usedPoints, setUsedPoints] = useState(0);
 
+
   const handleFinishOrder = useCallback(async () => {
 
     try{
@@ -79,7 +80,6 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
         <Table striped bordered hover>
           <thead>
             <tr>
-              <th>Quantidade</th>
               <th>Produto</th>
               <th>Preço em pontos</th>
               <th>Preço</th>
@@ -89,7 +89,6 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
           <tbody>
             {order?.orderProducts?.map(orderProduct => (
               <tr key={orderProduct.id}>
-                <td>{orderProduct.quantity}</td>
                 <td>{orderProduct.product.name}</td>
                 <td>{orderProduct.product.priceInPoints}</td>
                 <td>R$ {orderProduct.product.price}</td>
@@ -113,6 +112,15 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
               </tr>
             ))}
           </tbody>
+          <tfoot>
+              <tr>
+                <td colSpan={order.customer ? 3 : 2}>Total a receber:</td>
+                <td>R$ {order.orderProducts.map(
+                  o => selectedProducts.find(s => s === o.id) ? 0 : o.product.price
+                  )
+                  .reduce((accumulator, value) => (accumulator + value))}</td>
+              </tr>
+          </tfoot>
         </Table>
       </Card.Body>
 

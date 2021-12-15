@@ -1,3 +1,5 @@
+import OrderProductDTO from './OrderProductDTO';
+
 export default interface OrderDTO {
   id: string;
   createdAt: string;
@@ -6,17 +8,7 @@ export default interface OrderDTO {
     cpf: string;
     points: number;
   };
-  orderProducts: {
-    id: string;
-    product: { 
-      id: string;
-      name: string;
-      price: number;
-      priceInPoints: number;
-      fileName: string;
-    }
-    quantity: number;
-  }[];
+  orderProducts: OrderProductDTO[];
   user: {
     id: string;
     name: string;

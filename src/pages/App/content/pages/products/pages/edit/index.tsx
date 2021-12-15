@@ -7,6 +7,7 @@ import api from '../../../../../../../services/api';
 import { useToast } from '../../../../../../../hooks/toast';
 import { useHistory, useLocation } from 'react-router-dom';
 import ProductDTO from '../../DTOs/productDTO';
+import { getError } from '../../../../../../../services/api';
 
 const Edit: React.FC = () => {
 
@@ -83,7 +84,7 @@ const Edit: React.FC = () => {
                   });                  
             };
             reader.onerror = function (error) {
-                addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao ler imagem"});
+                addToast({type: 'danger', title: "Erro", description: getError(error)});
             };
         }
         else {
@@ -108,7 +109,7 @@ const Edit: React.FC = () => {
     else{
       console.log("não é valido")
     }
-  }, [isValid, product.id, name, price, priceInPoints, addToast])
+  }, [isValid, product.id, name, price, priceInPoints, addToast, history])
 
   return (
     <Container>

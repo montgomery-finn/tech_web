@@ -7,7 +7,7 @@ import Input from '../../Components/Input'
 import {LinkContainer} from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import {useToast} from '../../hooks/toast';
-import api from '../../services/api';
+import api, { getError } from '../../services/api';
 
 const Signup: React.FC = () =>{
   
@@ -98,10 +98,10 @@ const Signup: React.FC = () =>{
           type: 'success'
         });
         
-      } catch {
+      } catch (error) {
         addToast({
           title: "Erro ao realizar cadastro!",
-          description: "Ocorreu um erro ao realizar o cadastro, tente novamente mais tarde",
+          description: getError(error),
           type: 'danger'
         });
       }

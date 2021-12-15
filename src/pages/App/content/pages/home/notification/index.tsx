@@ -50,11 +50,12 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
       ready: v4()
     })
       .then(() => {
+        addToast({type: "success", title:"Sucesso", description: "Cliente notificado com sucesso"})
       })
       .catch((error) => {
         // The write failed...
       });
-  }, [order.id]);
+  }, [addToast, order.id]);
 
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
 

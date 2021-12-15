@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, ItensContainer } from './styles';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import api from '../../../../../../../services/api';
+import api, { getError } from '../../../../../../../services/api';
 import { useToast } from '../../../../../../../hooks/toast';
 import ProductDTO from '../../DTOs/productDTO';
 import Item from './item';
@@ -21,8 +21,8 @@ const List: React.FC = () => {
         const response = await api.get<ProductDTO[]>("products");
   
         setProducts(response.data);
-      } catch{
-        addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao recuperar os produtos"})
+      } catch (error){
+        addToast({type: 'danger', title: "Erro", description: getError(error)})
       }
     }
 

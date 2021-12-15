@@ -3,7 +3,7 @@ import { Container } from './styles';
 import { Card, Button } from 'react-bootstrap';
 import Input from '../../../../../../../Components/Input';
 import InputFile from '../../../../../../../Components/InputFile';
-import api from '../../../../../../../services/api';
+import api, { getError } from '../../../../../../../services/api';
 import { useToast } from '../../../../../../../hooks/toast';
 import { useHistory } from 'react-router-dom';
 
@@ -87,14 +87,14 @@ const Create: React.FC = () => {
           };
         }
       }
-      catch{
-        addToast({type: 'danger', title: "Erro", description: "Ocorreu um erro ao cadastrar produto"});
+      catch (error){
+        addToast({type: 'danger', title: "Erro", description: getError(error)});
       }
     }
     else{
       console.log("não é valido")
     }
-  }, [isValid, name, price, priceInPoints, addToast])
+  }, [isValid, name, price, priceInPoints, addToast, history])
 
   return (
     <Container>

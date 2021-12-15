@@ -8,6 +8,7 @@ import {LinkContainer} from 'react-router-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { useToast } from '../../hooks/toast';
 import {useAuth} from '../../hooks/auth';
+import { getError } from '../../services/api';
 
 const Signup: React.FC = () =>{
   
@@ -67,10 +68,10 @@ const Signup: React.FC = () =>{
       try{
         await signIn({email, password});
         history.push("app");
-      } catch{
+      } catch (error){
         addToast({
           title: "Erro ao realizar login!",
-          description: "Ocorreu um erro ao realizar o login, tente novamente mais tarde",
+          description: getError(error),
           type: 'danger'
         });
       }

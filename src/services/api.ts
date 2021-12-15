@@ -5,3 +5,7 @@ const api = axios.create({
 }) ;
 
 export default api;
+
+export function getError(error: any): string{
+    return error?.response?.data;
+}

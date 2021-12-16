@@ -105,6 +105,7 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
                           setSelectedProducts(oldValue => [...oldValue, orderProduct.id])
                         } else {
                           setUsedPoints(oldValue => oldValue -= orderProduct.product.priceInPoints);
+                          setSelectedProducts(oldValue => oldValue.filter(p => p !== orderProduct.id))
                         }
                       }}
                     />
@@ -118,7 +119,7 @@ const Notification: React.FC<NotificationProps> = ({ order, onRemoveOrder }) => 
                 <td>R$ {order.orderProducts.map(
                   o => selectedProducts.find(s => s === o.id) ? 0 : o.product.price
                   )
-                  .reduce((accumulator, value) => (accumulator + value))}</td>
+                  .reduce((accumulator, value) => (accumulator + value)).toFixed(2)}</td>
               </tr>
           </tfoot>
         </Table>
